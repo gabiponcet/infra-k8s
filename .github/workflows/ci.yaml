@@ -36,10 +36,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Copy Terraform files
+      - name: Copy Terraform files if not exists
         run: |
           mkdir -p k8s/Terraform
-          cp -R k8s/Terraform/* k8s/Terraform/
+          for file in k8s/Terraform/*; do
+            if [ ! -f "k8s/Terraform/$(basename $file)" ]; then
+              cp -R $file k8s/Terraform/
+            fi
+          done
           if [ -f k8s/Terraform/lambda_function_payload.zip ]; then
             cp k8s/Terraform/lambda_function_payload.zip k8s/Terraform/lambda_function_payload.zip
           else
