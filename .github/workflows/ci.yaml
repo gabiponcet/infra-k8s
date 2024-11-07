@@ -84,12 +84,16 @@ jobs:
           cd k8s
           git config --global user.email "gabiponcet@gmail.com"
           git config --global user.name "gabiponcet"
-          git add .github/workflows/ci.yaml
-          git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
-          git pull origin main --rebase || true
-          if git rebase --continue || git rebase --skip; then
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
+          if [ -f .github/workflows/ci.yaml ]; then
+            git add .github/workflows/ci.yaml
+            git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
+            git pull origin main --rebase || true
+            if git rebase --continue || git rebase --skip; then
+              git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
+            else
+              echo "Rebase failed, manual intervention required."
+              exit 1
+            fi
           else
-            echo "Rebase failed, manual intervention required."
-            exit 1
+            echo "File .github/workflows/ci.yaml not found, skipping commit."
           fi
