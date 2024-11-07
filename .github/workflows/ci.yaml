@@ -41,15 +41,9 @@ jobs:
           mkdir -p k8s/Terraform
           for file in k8s/Terraform/*; do
             if [ ! -f "k8s/Terraform/$(basename $file)" ]; then
-              cp -R $file k8s/Terraform/
+              cp $file k8s/Terraform/
             fi
           done
-          if [ -f k8s/Terraform/lambda_function_payload.zip ]; then
-            cp k8s/Terraform/lambda_function_payload.zip k8s/Terraform/lambda_function_payload.zip
-          else
-            echo "File lambda_function_payload.zip not found"
-            exit 1
-          fi
 
       - name: Install Terraform
         run: |
