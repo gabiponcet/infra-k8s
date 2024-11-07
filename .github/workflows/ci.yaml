@@ -1,0 +1,33 @@
+name: CI/CD Pipeline - Kubernetes Infra
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  update-k8s:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out infra-k8s repo
+        uses: actions/checkout@v3
+
+      - name: Update Kubernetes manifests
+        id: update_manifests
+        run: |
+          find ./k8s -name 'deployment.yaml' -exec sed -i 's|image:.*|image: gabiponcet/lanchonete-app:latest|' {} +
+          git diff --quiet || echo "::set-output name=changes_detected::true"
+      - name: Commit and push changes to infra-k8s repo
+        if: steps.update_manifests.outputs.changes_detected == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "gabiponcet@gmail.com"
+          git config --global user.name "gabiponcet"
+          git add .
+          git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
