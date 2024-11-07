@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Kubernetes Infra
+name: CI/CD Pipeline - Kubernetes Repository
 
 on:
   push:
@@ -8,26 +8,92 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  repository-projects: write
+
 jobs:
-  update-k8s:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out infra-k8s repo
-        uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Clone Kubernetes repo if not exists
+        run: |
+          if [ ! -d "k8s" ]; then
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git k8s
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy Terraform files if not exists
+        run: |
+          mkdir -p k8s/Terraform
+          for file in k8s/Terraform/*; do
+            if [ ! -f "k8s/Terraform/$(basename $file)" ]; then
+              cp $file k8s/Terraform/
+            fi
+          done
+
+      - name: Install Terraform
+        run: |
+          sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install -y terraform
+
+      - name: Install LocalStack CLI
+        run: pip install localstack
+
+      - name: Start LocalStack with Docker
+        run: |
+          export LAMBDA_EXECUTOR=docker
+          localstack start -d
+        env:
+          LAMBDA_EXECUTOR: docker
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: k8s/Terraform
+
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+        working-directory: k8s/Terraform
 
       - name: Update Kubernetes manifests
         id: update_manifests
         run: |
           find ./k8s -name 'deployment.yaml' -exec sed -i 's|image:.*|image: gabiponcet/lanchonete-app:latest|' {} +
-          git diff --quiet || echo "::set-output name=changes_detected::true"
-      - name: Commit and push changes to infra-k8s repo
-        if: steps.update_manifests.outputs.changes_detected == 'true'
+          git diff --quiet || echo "changes_detected=true" >> $GITHUB_ENV
+
+      - name: Commit and push changes to Kubernetes repo
+        if: env.changes_detected == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd k8s
           git config --global user.email "gabiponcet@gmail.com"
           git config --global user.name "gabiponcet"
-          git add .
-          git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
+          if [ -f .github/workflows/ci.yaml ]; then
+            git add .github/workflows/ci.yaml
+            git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
+            git pull origin main --rebase || true
+            if git rebase --continue || git rebase --skip; then
+              git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
+            else
+              echo "Rebase failed, manual intervention required."
+              exit 1
+            fi
+          else
+            echo "File .github/workflows/ci.yaml not found, skipping commit."
+          fi
