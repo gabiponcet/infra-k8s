@@ -28,12 +28,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t gabiponcet/lanchonete-app:latest .
-
-      - name: Push Docker image
-        run: docker push gabiponcet/lanchonete-app:latest
-
       - name: Clone Kubernetes repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,10 +75,10 @@ jobs:
         id: update_manifests
         run: |
           find ./k8s -name 'deployment.yaml' -exec sed -i 's|image:.*|image: gabiponcet/lanchonete-app:latest|' {} +
-          git diff --quiet || echo "::set-output name=changes_detected::true"
+          echo "changes_detected=true" >> $GITHUB_ENV
 
       - name: Commit and push changes to Kubernetes repo
-        if: steps.update_manifests.outputs.changes_detected == 'true'
+        if: env.changes_detected == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
