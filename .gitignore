@@ -1,0 +1,20 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+.idea/workspace.xml
+
+# Diretórios de Build
+out/
+build/
+target/
+
+# Arquivos Temporários
+*.log
+*.tmp
+
+# Configurações do Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
