@@ -86,4 +86,5 @@ jobs:
           git config --global user.name "gabiponcet"
           git add .
           git commit -m "Update deployment to latest image - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull --rebase
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/gabiponcet/infra-k8s.git HEAD:main
