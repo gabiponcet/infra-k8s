@@ -19,9 +19,6 @@ jobs:
       - name: Install LocalStack CLI
         run: pip install localstack
 
-      - name: Verify LocalStack Installation
-        run: localstack --version
-
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
 
