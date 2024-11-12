@@ -51,10 +51,10 @@ jobs:
     steps:
       - name: Wait for LocalStack
         run: |
-          for i in {1..10}; do
+          for i in {1..20}; do
             nc -zv localhost 4566 && break
             echo "Waiting for LocalStack to be ready..."
-            sleep 5
+            sleep 10
           done
 
   init-terraform:

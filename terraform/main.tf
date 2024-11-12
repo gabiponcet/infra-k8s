@@ -52,5 +52,11 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 resource "aws_api_gateway_deployment" "test_deployment" {
   depends_on = [aws_api_gateway_integration.lambda_integration]
   rest_api_id = aws_api_gateway_rest_api.test_api.id
+  stage_name  = aws_api_gateway_stage.test_stage.stage_name
+}
+
+resource "aws_api_gateway_stage" "test_stage" {
+  rest_api_id = aws_api_gateway_rest_api.test_api.id
   stage_name  = "dev"
+  deployment_id = aws_api_gateway_deployment.test_deployment.id
 }
