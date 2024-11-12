@@ -53,11 +53,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Terraform Init
-        run: terraform init -upgrade
+        run: |
+          terraform init -upgrade
+        working-directory: ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate
         working-directory: ./terraform
 
       - name: Verify Terraform Plugins
-        run: terraform validate
+        run: terraform providers
         working-directory: ./terraform
 
   deploy:
@@ -69,5 +74,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          terraform init -upgrade
+          terraform apply -auto-approve
         working-directory: ./terraform
