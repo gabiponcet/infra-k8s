@@ -34,22 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
 
-    services:
-      localstack:
-        image: localstack/localstack
-        ports:
-          - 4566:4566
-        options: >
-          --entrypoint= -d
-
     steps:
       - name: Check out code
         uses: actions/checkout@v2
 
       - name: Start LocalStack with Docker
         run: |
-          export LAMBDA_EXECUTOR=docker
-          docker-compose up -d localstack
+          docker run --name localstack -d -p 4566:4566 -e LAMBDA_EXECUTOR=docker localstack/localstack
         env:
           LAMBDA_EXECUTOR: docker
 
