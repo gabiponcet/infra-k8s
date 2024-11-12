@@ -22,12 +22,10 @@ jobs:
           python-version: '3.x'
 
       - name: Install LocalStack CLI
-        run: |
-          pip install localstack
-          export PATH=$PATH:~/.local/bin
+        run: pip install localstack
 
       - name: Verify LocalStack Installation
-        run: ~/.local/bin/localstack --version
+        run: localstack --version
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
@@ -36,6 +34,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
 
+    services:
+      localstack:
+        image: localstack/localstack
+        ports:
+          - 4566:4566
+        options: >
+          --entrypoint= -d
+
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -43,7 +49,7 @@ jobs:
       - name: Start LocalStack with Docker
         run: |
           export LAMBDA_EXECUTOR=docker
-          ~/.local/bin/localstack start -d
+          docker-compose up -d localstack
         env:
           LAMBDA_EXECUTOR: docker
 
