@@ -81,6 +81,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Install Terraform Providers
+        run: |
+          terraform init -upgrade
+          terraform providers mirror ./terraform/providers
+        working-directory: ./terraform
+
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          terraform apply -auto-approve
         working-directory: ./terraform
