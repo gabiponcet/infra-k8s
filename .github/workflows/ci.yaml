@@ -9,85 +9,35 @@ on:
       - main
 
 jobs:
-  setup:
+  localstack-setup:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
 
       - name: Install LocalStack CLI
         run: pip install localstack
 
-      - name: Verify LocalStack Installation
-        run: localstack --version
-
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v1
-
-  start-localstack:
-    runs-on: ubuntu-latest
-    needs: setup
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
       - name: Start LocalStack with Docker
         run: |
-          docker run --name localstack -d -p 4566:4566 -e LAMBDA_EXECUTOR=docker localstack/localstack
+          export LAMBDA_EXECUTOR=docker
+          localstack start -d
         env:
           LAMBDA_EXECUTOR: docker
 
-  verify-localstack:
+  terraform:
     runs-on: ubuntu-latest
-    needs: start-localstack
+    needs: localstack-setup
 
     steps:
-      - name: Wait for LocalStack
-        run: |
-          for i in {1..30}; do
-            nc -zv localhost 4566 && break
-            echo "Waiting for LocalStack to be ready..."
-            sleep 10
-          done
-
-  init-terraform:
-    runs-on: ubuntu-latest
-    needs: verify-localstack
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init
-        run: terraform init -upgrade
-        working-directory: ./terraform
-
-      - name: Verify Terraform Plugins
-        run: terraform providers
-        working-directory: ./terraform
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: init-terraform
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Install Terraform Providers
-        run: |
-          terraform init -upgrade
-          terraform providers mirror ./terraform/providers
+        run: terraform init
         working-directory: ./terraform
 
       - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve
+        run: terraform apply -auto-approve
         working-directory: ./terraform
