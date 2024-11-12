@@ -16,11 +16,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
       - name: Install LocalStack CLI
-        run: pip install localstack
+        run: |
+          pip install localstack
+          export PATH=$PATH:~/.local/bin
 
       - name: Verify LocalStack Installation
-        run: localstack --version
+        run: ~/.local/bin/localstack --version
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
@@ -36,7 +43,7 @@ jobs:
       - name: Start LocalStack with Docker
         run: |
           export LAMBDA_EXECUTOR=docker
-          localstack start -d
+          ~/.local/bin/localstack start -d
         env:
           LAMBDA_EXECUTOR: docker
 
