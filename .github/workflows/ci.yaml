@@ -52,15 +52,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
       - name: Terraform Init
         run: terraform init -upgrade
         working-directory: ./terraform
 
-      - name: List Terraform Providers
-        run: terraform providers
+      - name: Verify Terraform Plugins
+        run: terraform validate
         working-directory: ./terraform
 
   deploy:
@@ -70,9 +67,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
