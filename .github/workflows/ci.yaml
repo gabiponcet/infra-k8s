@@ -26,6 +26,14 @@ jobs:
         env:
           LAMBDA_EXECUTOR: docker
 
+      - name: Wait for LocalStack
+        run: |
+          for i in {1..30}; do
+            nc -zv localhost 4566 && break
+            echo "Waiting for LocalStack to be ready..."
+            sleep 10
+          done
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
@@ -36,4 +44,7 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./terraform
-
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
