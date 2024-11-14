@@ -54,6 +54,24 @@ jobs:
     needs: terraform
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Create Deployment
+        id: create_deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:owner/:repo/deployments
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          ref: ${{ github.sha }}
+          environment: staging
+          description: "Deploying to staging environment"
+          transient_environment: true
+          production_environment: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy to Staging
         run: echo "Deploying to staging environment"
 
@@ -71,6 +89,24 @@ jobs:
     needs: deploy-staging
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Create Deployment
+        id: create_deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:owner/:repo/deployments
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          ref: ${{ github.sha }}
+          environment: production
+          description: "Deploying to production environment"
+          transient_environment: false
+          production_environment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy to Production
         run: echo "Deploying to production environment"
 
