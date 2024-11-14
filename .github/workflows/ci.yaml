@@ -65,8 +65,6 @@ jobs:
           ref: ${{ github.sha }}
           environment: staging
           description: "Deploying to staging environment"
-          transient_environment: true
-          production_environment: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,7 +75,7 @@ jobs:
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/deployments/${{ steps.create_deployment.outputs.deployment_id }}/statuses
-          state: success
+          mediaType: '{"state":"success"}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -97,8 +95,6 @@ jobs:
           ref: ${{ github.sha }}
           environment: production
           description: "Deploying to production environment"
-          transient_environment: false
-          production_environment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -109,6 +105,6 @@ jobs:
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/deployments/${{ steps.create_deployment_prod.outputs.deployment_id }}/statuses
-          state: success
+          mediaType: '{"state":"success"}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
