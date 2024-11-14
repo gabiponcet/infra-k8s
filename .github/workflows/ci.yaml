@@ -28,6 +28,7 @@ jobs:
 
   terraform:
     runs-on: ubuntu-latest
+    needs: localstack
 
     steps:
       - name: Setup Terraform
