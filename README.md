@@ -62,32 +62,31 @@ Monitorar os logs do LocalStack:
    ``bash
     `docker logs localstack_main`
 
-### CI/CD Pipeline
+# CI/CD Pipeline
 
-### Descrição
+## Descrição
 
 Este repositório utiliza GitHub Actions para provisionar infraestrutura usando Terraform.
 
-### Estrutura do Pipeline
+## Estrutura do Pipeline
 
-1. **Verificação de Código**:
+### Verificação de Código
 - Validação do código Terraform (`terraform validate`)
 - Verificação de formatação (`terraform fmt -check`)
 
-2. **Provisionamento**:
+### Provisionamento
 - Inicialização do Terraform (`terraform init`)
 - Aplicação do Terraform (`terraform apply -auto-approve`)
 
-3. **Implantação**:
+### Implantação
 - Criação e atualização de deployments em ambientes de staging e produção
 
-4. **Rollback**:
+### Rollback
 - Rollback automático em caso de falha durante a aplicação do Terraform
 
-### Passos para Recuperação
+## Passos para Recuperação
 
 Caso o pipeline falhe, siga estes passos:
 1. Verifique os logs do GitHub Actions para identificar o problema.
 2. Utilize a etapa de rollback para reverter mudanças, se necessário.
 3. Corrija os problemas e reinicie o pipeline.
-
