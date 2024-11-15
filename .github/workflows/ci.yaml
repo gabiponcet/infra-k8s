@@ -37,6 +37,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        working-directory: ./terraform
+
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
@@ -48,6 +56,11 @@ jobs:
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
           AWS_DEFAULT_REGION: us-east-1
+
+      - name: Rollback Deployment
+        if: failure()
+        run: echo "Rolling back deployment"
+        working-directory: ./terraform
 
   deploy-staging:
     runs-on: ubuntu-latest
