@@ -180,3 +180,4 @@ jobs:
           curl -X POST \
             -H 'Content-type: application/json' \
             --data '{"content":"✅ O pipeline de produção foi concluído com sucesso!"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
