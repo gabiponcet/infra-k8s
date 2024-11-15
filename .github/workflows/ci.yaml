@@ -100,6 +100,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Send Discord Notification
+        if: success()
+        run: |
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            --data '{"content":"O pipeline foi concluído com sucesso!"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
   deploy-production:
     runs-on: ubuntu-latest
     needs: deploy-staging
@@ -133,3 +141,11 @@ jobs:
             -d '{"state":"success"}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Discord Notification
+        if: success()
+        run: |
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            --data '{"content":"O pipeline foi concluído com sucesso!"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
