@@ -84,9 +84,28 @@ Este repositório utiliza GitHub Actions para provisionar infraestrutura usando 
 ### Rollback
 - Rollback automático em caso de falha durante a aplicação do Terraform
 
-## Passos para Recuperação
+### Notificações
+- Notificações de sucesso e falha enviadas para Discord
 
+## Executar CI/CD Pipeline
+
+Certifique-se de que os seguintes segredos estão configurados no GitHub:
+- `DOCKER_USERNAME`: Usuário do Docker
+- `DOCKER_PASSWORD`: Senha do Docker
+- `GITHUB_TOKEN`: Token de acesso ao GitHub
+- `DISCORD_WEBHOOK_URL`: URL do webhook do Discord para enviar notificações
+
+Ao fazer um push ou criar um pull request, o workflow CI/CD será acionado automaticamente e provisionará a infraestrutura.
+
+## Monitoramento
+
+Monitorar os logs do LocalStack: `docker logs localstack_main`
+
+## Passos para Recuperação
 Caso o pipeline falhe, siga estes passos:
+
 1. Verifique os logs do GitHub Actions para identificar o problema.
+
 2. Utilize a etapa de rollback para reverter mudanças, se necessário.
+
 3. Corrija os problemas e reinicie o pipeline.
