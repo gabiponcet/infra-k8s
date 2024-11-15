@@ -58,7 +58,36 @@ Além disso, ele emula serviços da AWS utilizando LocalStack para testar e prov
 Certifique-se de que os segredos necessários (DOCKER_USERNAME, DOCKER_PASSWORD, GITHUB_TOKEN) estão configurados no GitHub. Ao fazer um push ou criar um pull request, o workflow CI/CD será acionado automaticamente e provisionará a infraestrutura.
 
 ### Monitoramento
-  Monitorar os logs do LocalStack:
-  ```bash
-  docker logs localstack_main
+Monitorar os logs do LocalStack:
+   ``bash
+    `docker logs localstack_main`
+
+### CI/CD Pipeline
+
+### Descrição
+
+Este repositório utiliza GitHub Actions para provisionar infraestrutura usando Terraform.
+
+### Estrutura do Pipeline
+
+1. **Verificação de Código**:
+- Validação do código Terraform (`terraform validate`)
+- Verificação de formatação (`terraform fmt -check`)
+
+2. **Provisionamento**:
+- Inicialização do Terraform (`terraform init`)
+- Aplicação do Terraform (`terraform apply -auto-approve`)
+
+3. **Implantação**:
+- Criação e atualização de deployments em ambientes de staging e produção
+
+4. **Rollback**:
+- Rollback automático em caso de falha durante a aplicação do Terraform
+
+### Passos para Recuperação
+
+Caso o pipeline falhe, siga estes passos:
+1. Verifique os logs do GitHub Actions para identificar o problema.
+2. Utilize a etapa de rollback para reverter mudanças, se necessário.
+3. Corrija os problemas e reinicie o pipeline.
 
