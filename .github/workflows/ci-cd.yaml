@@ -113,14 +113,15 @@ jobs:
 
       - name: Apply Kubernetes Manifests
         run: |
-          kubectl apply -f path/to/your/manifests
-          kubectl wait --for=condition=available --timeout=600s deployment/my-deployment
-        working-directory: ./kubernetes
+          kubectl apply -f k8s
+        working-directory: ./k8s
 
-      - name: Run Tests
+      - name: Validate Kubernetes Manifests
         run: |
-          kubectl get all
-          # Add more specific kubectl commands to test your setup
+          kubectl get namespaces
+          kubectl get resourcequotas
+          kubectl get ingresses
+        working-directory: ./k8s
 
       - name: Delete Kind Cluster
         if: always()
@@ -160,8 +161,8 @@ jobs:
           sudo apt-get install -y trivy
 
       - name: Scan Kubernetes Manifests
-        run: trivy k8s --file path/to/your/manifests
-        working-directory: ./kubernetes
+        run: trivy k8s --file k8s
+        working-directory: ./k8s
 
       - name: Send Discord Failure Notification
         if: failure()
