@@ -2,6 +2,8 @@
 
 echo "Running integration tests..."
 
+chmod +x ./scripts/*.sh
+
 echo "Installing Go and Terratest dependencies..."
 sudo apt-get update
 sudo apt-get install -y golang-go
