@@ -16,6 +16,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Set execute permissions for scripts
+        run: chmod +x ./scripts/*.sh
+
       - name: Install LocalStack CLI
         run: pip install localstack
 
