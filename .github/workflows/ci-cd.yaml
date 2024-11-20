@@ -115,7 +115,7 @@ jobs:
           sudo apt-get install -y trivy
 
       - name: Scan Infrastructure Code
-        run: trivy config --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress
+        run: trivy config --exit-code 1 --severity HIGH,CRITICAL --no-progress
 
       - name: Send Discord Failure Notification
         if: failure()
