@@ -1,4 +1,4 @@
-module github.com/yourusername/yourproject
+module github.com/gabiponcet/infra-k8s
 
         go 1.18
 

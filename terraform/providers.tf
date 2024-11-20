@@ -19,3 +19,45 @@ provider "aws" {
 provider "kubernetes" {
   config_path = var.kubeconfig_path
 }
+
+resource "kubernetes_namespace" "lanchonete" {
+  metadata {
+    name = "lanchonete-namespace"
+  }
+}
+
+resource "kubernetes_deployment" "lanchonete" {
+  metadata {
+    name      = "lanchonete-deployment"
+    namespace = kubernetes_namespace.lanchonete.metadata[0].name
+  }
+
+  spec {
+    replicas = 2
+
+    selector {
+      match_labels = {
+        app = "example"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "example"
+        }
+      }
+
+      spec {
+        container {
+          image = "nginx:latest"
+          name  = "example"
+
+          port {
+            container_port = 80
+          }
+        }
+      }
+    }
+  }
+}
