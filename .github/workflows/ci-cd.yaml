@@ -86,7 +86,7 @@ jobs:
         run: |
           curl -X POST \
             -H 'Content-type: application/json' \
-            --data '{"content":"⚠️ O pipeline falhou! A infraestrutura foi destruída. Por favor, verifique os logs para mais detalhes."}' \
+            --data '{"content":"⚠️ O pipeline Terraform falhou! A infraestrutura foi destruída. Por favor, verifique os logs para mais detalhes."}' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send Discord Success Notification
@@ -94,7 +94,7 @@ jobs:
         run: |
           curl -X POST \
             -H 'Content-type: application/json' \
-            --data '{"content":"✅ O pipeline foi concluído com sucesso!"}' \
+            --data '{"content":"✅ O pipeline Terraform foi concluído com sucesso!"}' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
 
   security:
@@ -114,9 +114,8 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y trivy
 
-      - name: Scan Kubernetes Manifests
-        run: trivy k8s
-        working-directory: ./k8s
+      - name: Scan Infrastructure Code
+        run: trivy config --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress
 
       - name: Send Discord Failure Notification
         if: failure()
