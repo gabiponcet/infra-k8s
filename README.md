@@ -78,6 +78,10 @@ Este repositório utiliza GitHub Actions para provisionar infraestrutura usando 
 - Inicialização do Terraform (`terraform init`)
 - Aplicação do Terraform (`terraform apply -auto-approve`)
 
+### Segurança
+- Instalação do Trivy
+- Verificação de segurança dos arquivos de configuração (`trivy config`)
+
 ### Implantação
 - Criação e atualização de deployments em ambientes de staging e produção
 
@@ -94,6 +98,8 @@ Certifique-se de que os seguintes segredos estão configurados no GitHub:
 - `DOCKER_PASSWORD`: Senha do Docker
 - `GITHUB_TOKEN`: Token de acesso ao GitHub
 - `DISCORD_WEBHOOK_URL`: URL do webhook do Discord para enviar notificações
+- `AWS_ACCESS_KEY_ID`: chave de acesso AWS
+- `AWS_SECRET_ACCESS_KEY`: secret key da AWS
 
 Ao fazer um push ou criar um pull request, o workflow CI/CD será acionado automaticamente e provisionará a infraestrutura.
 
