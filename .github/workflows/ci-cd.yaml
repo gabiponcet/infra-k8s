@@ -61,6 +61,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: test
           AWS_DEFAULT_REGION: us-east-1
 
+      - name: Run Smoke Tests
+        run: ./scripts/run_smoke_tests.sh
+
+      - name: Run Integration Tests
+        run: ./scripts/run_integration_tests.sh
+
       - name: Rollback Deployment
         if: failure()
         run: terraform destroy -auto-approve
