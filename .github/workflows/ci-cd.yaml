@@ -135,7 +135,7 @@ jobs:
 
   deploy-staging:
     runs-on: ubuntu-latest
-    needs: terraform
+    needs: security
 
     steps:
       - name: Check out code
