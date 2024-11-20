@@ -106,16 +106,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Trivy
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update -y
-          sudo apt-get install -y trivy
+        run: | 
+          sudo apt-get update -y 
+          sudo apt-get install -y wget apt-transport-https gnupg lsb-release 
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add - 
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list 
+          sudo apt-get update -y 
+          sudo apt-get install -y trivy 
 
       - name: Scan Infrastructure Code
-        run: trivy config --exit-code 1 --severity HIGH,CRITICAL --no-progress
+        run: trivy config --exit-code 1 --severity
 
       - name: Send Discord Failure Notification
         if: failure()
