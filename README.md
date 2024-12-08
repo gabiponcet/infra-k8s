@@ -27,7 +27,7 @@ Além disso, ele emula serviços da AWS utilizando LocalStack para testar e prov
 
 2. Em seguida, rode o LocalStack pelo Docker:
    ```bash
-   docker run --rm -it -e LOCALSTACK_API_KEY="test" -e LOCALSTACK_HOST="localhost" -e DOCKER_HOST="unix:///var/run/docker.sock" -e LOCALSTACK_SERVICES="lambda,s3,iam,apigateway" -v /var/run/docker.sock:/var/run/docker.sock -p 4566:4566 -p 4571:4571 localstack/localstack
+   docker run --rm -it -e LOCALSTACK_API_KEY="test" -e LOCALSTACK_HOST="localhost" -e DOCKER_HOST="unix:///var/run/docker.sock" -e LOCALSTACK_SERVICES="lambda,s3,iam,apigateway,cloudformation,cognitoidp,rds" -v /var/run/docker.sock:/var/run/docker.sock -p 4566:4566 -p 4571:4571 localstack/localstack
 
 3. No terminal, configure as variáveis AWS:
    ```bash
