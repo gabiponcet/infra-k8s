@@ -58,8 +58,7 @@ Além disso, ele emula serviços da AWS utilizando LocalStack para testar e prov
 Certifique-se de que os segredos necessários (DOCKER_USERNAME, DOCKER_PASSWORD, GITHUB_TOKEN) estão configurados no GitHub. Ao fazer um push ou criar um pull request, o workflow CI/CD será acionado automaticamente e provisionará a infraestrutura.
 
 ### Monitoramento
-Monitorar os logs do LocalStack:
-   ``bash
+Monitorar os logs do LocalStack: 
     `docker logs localstack_main`
 
 # CI/CD Pipeline
